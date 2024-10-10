@@ -12,7 +12,6 @@ class Command:
         try:
             self.kv.insert(args.key, args.value)
             self.kv.commit()
-            print(f"added {args.key}, {args.value}")
         except sqlite3.IntegrityError:
             if input("key is already exist. update it? (Y/n)") != "n":
                 self.kv.update(args.key, args.value)
@@ -33,11 +32,10 @@ class Command:
 
     def get(self, args):
         result = self.kv.get(args.key)
+        if result == None:
+            print("data not found.")
+            return
         print(result[0])
-
-
-def add_command(args):
-    print(f"added {args.key}, {args.value}")
 
 
 def main():
@@ -55,7 +53,6 @@ def main():
     parser_add.add_argument("key", type=str, help="The key to add")
     parser_add.add_argument("value", type=str, help="The value to add")
     parser_add.set_defaults(func=command.add)
-    # parser_add.set_defaults(func=add_command)
 
     # rm command
     parser_remove = subparsers.add_parser(
