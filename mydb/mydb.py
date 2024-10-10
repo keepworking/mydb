@@ -62,7 +62,13 @@ class Command:
             useRedirect = self.kv.get("mydb.config.redirect")[0]
             sshTarget = self.kv.get("mydb.config.sshTarget")[0]
 
-            sshCommand = ["ssh"] + sshTarget.split(" ") + ["~/.local/bin/mydb"] + args
+            newArgs = []
+            for arg in args :
+                if " " in arg:
+                    arg = f'"{arg}"'
+                newArgs.append(arg)
+
+            sshCommand = ["ssh"] + sshTarget.split(" ") + ["~/.local/bin/mydb"] + newArgs
 
             if useRedirect == "true":
                 sshproc = subprocess.Popen(
