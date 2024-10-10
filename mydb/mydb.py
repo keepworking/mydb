@@ -43,10 +43,8 @@ class Command:
         result = False
         try:
             useRedirect = self.kv.get("mydb.config.redirect")
-            print(useRedirect)
             if useRedirect != None and useRedirect[0] == "true":
                 sshTarget = self.kv.get("mydb.config.sshTarget")
-                print(sshTarget)
 
                 if sshTarget == None:
                     result = False
@@ -121,7 +119,6 @@ def main():
     if args.command is None:
         parser.print_help()
     else:
-        print("args.command = " + args.command)
         if command.checkUseRedirect() == True and "local" not in args.command :
             command.redirect(sys.argv[1:])
         else:
