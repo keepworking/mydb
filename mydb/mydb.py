@@ -2,6 +2,8 @@ from .kv import Kv
 
 import argparse
 import sqlite3
+import sys
+import subprocess
 
 
 class Command:
@@ -37,6 +39,44 @@ class Command:
             return
         print(result[0])
 
+    def checkUseRedirect(self):
+        result = False
+        try:
+            useRedirect = self.kv.get("mydb.config.redirect")
+            print(useRedirect)
+            if useRedirect != None and useRedirect[0] == "true":
+                sshTarget = self.kv.get("mydb.config.sshTarget")
+                print(sshTarget)
+
+                if sshTarget == None:
+                    result = False
+                else:
+                    result = True
+        except Exception as e:
+            print("checkUseRedirect")
+            print(e)
+            result = False
+
+        return result
+
+    def redirect(self, args):
+        try:
+            useRedirect = self.kv.get("mydb.config.redirect")[0]
+            sshTarget = self.kv.get("mydb.config.sshTarget")[0]
+
+            sshCommand = ["ssh"] + sshTarget.split(" ") + ["~/.local/bin/mydb"] + args
+
+            if useRedirect == "true":
+                sshproc = subprocess.Popen(
+                    sshCommand, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr
+                )
+                sshproc.communicate()
+        except Exception as e:
+            print("command redirect failed as follow")
+            print(e)
+
+        pass
+
 
 def main():
 
@@ -48,7 +88,7 @@ def main():
 
     # add command
     parser_add = subparsers.add_parser(
-        "add", help="Add key-value pair", aliases=["insert", "put"]
+        "add", help="Add key-value pair", aliases=["insert", "put", "local_add"]
     )
     parser_add.add_argument("key", type=str, help="The key to add")
     parser_add.add_argument("value", type=str, help="The value to add")
@@ -56,14 +96,14 @@ def main():
 
     # rm command
     parser_remove = subparsers.add_parser(
-        "remove", help="Delete key-value pair", aliases=["delete", "rm"]
+        "remove", help="Delete key-value pair", aliases=["delete", "rm", "local_remove"]
     )
     parser_remove.add_argument("key", type=str, help="The key to remove")
     parser_remove.set_defaults(func=command.remove)
 
     # move command
     parser_move = subparsers.add_parser(
-        "move", help="Move key to athore key", aliases=["replace", "mv"]
+        "move", help="Move key to athore key", aliases=["replace", "mv", "local_move"]
     )
     parser_move.add_argument("fromKey", type=str, help="The key to move")
     parser_move.add_argument("toKey", type=str, help="The destination key to move")
@@ -71,7 +111,7 @@ def main():
 
     # get command
     parser_get = subparsers.add_parser(
-        "get", help="Get key-value pair", aliases=["read"]
+        "get", help="Get key-value pair", aliases=["read", "local_get"]
     )
     parser_get.add_argument("key", type=str, help="The key to get")
     parser_get.set_defaults(func=command.get)
@@ -81,7 +121,11 @@ def main():
     if args.command is None:
         parser.print_help()
     else:
-        args.func(args)
+        print("args.command = " + args.command)
+        if command.checkUseRedirect() == True and "local" not in args.command :
+            command.redirect(sys.argv[1:])
+        else:
+            args.func(args)
 
 
 if __name__ == "__main__":
