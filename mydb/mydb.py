@@ -119,7 +119,8 @@ def main():
     if args.command is None:
         parser.print_help()
     else:
-        if command.checkUseRedirect() == True and "local" not in args.command :
+        # redirect command over ssh if enabled
+        if command.checkUseRedirect() == True and "local" not in args.command:
             command.redirect(sys.argv[1:])
         else:
             args.func(args)
