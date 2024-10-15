@@ -51,6 +51,14 @@ class Command:
         else:
             print(result[0])
 
+    def search(self, args):
+        results = self.kv.search_keys(args.pattern)
+        if results:
+            for key in results:
+                print("- ", key)
+        else:
+            print("No keys found matching the pattern.")
+
     def checkUseRedirect(self):
         result = False
         try:
@@ -131,6 +139,13 @@ def main():
     parser_move.add_argument("fromKey", type=str, help="The key to move")
     parser_move.add_argument("toKey", type=str, help="The destination key to move")
     parser_move.set_defaults(func=command.move)
+
+    # search command
+    parser_search = subparsers.add_parser(
+        "search", help="Search for keys matching a pattern", aliases=["find"]
+    )
+    parser_search.add_argument("pattern", type=str, help="The pattern to search for")
+    parser_search.set_defaults(func=command.search)
 
     # get command
     parser_get = subparsers.add_parser(

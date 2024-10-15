@@ -52,6 +52,12 @@ class Kv:
         result = self.cur.fetchone()
         return result
 
+    def search_keys(self, pattern):
+        """Search for keys matching the given pattern."""
+        self.execute("SELECT key FROM kv_store WHERE key LIKE ?", (pattern,))
+        results = self.cur.fetchall()
+        return [row[0] for row in results]
+
     def test_show(self):
         result = self.execute("SELECT * FROM kv_store").fetchall()
         print(("key", "value"))
