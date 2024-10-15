@@ -11,10 +11,9 @@ class Command:
         self.kv = Kv()
 
     def add(self, args):
-        value = args.value
-        if value is None:
+        if args.value is None:
             print("Enter the value (end with Ctrl+D):")
-            value = sys.stdin.read().strip()
+            value = sys.stdin.read()
 
         try:
             self.kv.insert(args.key, value)
