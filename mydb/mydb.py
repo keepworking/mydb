@@ -13,7 +13,7 @@ class Command:
     def add(self, args):
         if args.value is None:
             print("Enter the value (end with Ctrl+D):")
-            value = sys.stdin.read()
+            value = sys.stdin.buffer.read()
 
         try:
             self.kv.insert(args.key, value)
@@ -41,7 +41,7 @@ class Command:
         if result == None:
             print("data not found.")
             return
-        print(result[0])
+        sys.stdout.buffer.write(result[0])
 
     def checkUseRedirect(self):
         result = False
