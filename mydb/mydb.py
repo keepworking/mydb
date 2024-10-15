@@ -42,7 +42,7 @@ class Command:
             print("data not found.")
             return
         if isinstance(result[0], bytes):
-            if args.to_file:
+            if args.binary:
                 sys.stdout.buffer.write(result[0])
             else:
                 print(
