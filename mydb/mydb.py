@@ -11,8 +11,13 @@ class Command:
         self.kv = Kv()
 
     def add(self, args):
+        value = args.value
+        if value is None:
+            print("Enter the value (end with Ctrl+D):")
+            value = sys.stdin.read().strip()
+
         try:
-            self.kv.insert(args.key, args.value)
+            self.kv.insert(args.key, value)
             self.kv.commit()
         except sqlite3.IntegrityError:
             if input("key is already exist. update it? (Y/n)") != "n":
@@ -95,7 +100,7 @@ def main():
         "add", help="Add key-value pair", aliases=["insert", "put", "local_add"]
     )
     parser_add.add_argument("key", type=str, help="The key to add")
-    parser_add.add_argument("value", type=str, help="The value to add")
+    parser_add.add_argument("value", type=str, nargs='?', help="The value to add (optional, can be provided via stdin)")
     parser_add.set_defaults(func=command.add)
 
     # rm command
