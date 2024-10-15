@@ -45,7 +45,9 @@ class Command:
             if args.to_file:
                 sys.stdout.buffer.write(result[0])
             else:
-                print("The data is binary and cannot be printed to the console. Use the --to-file option to save it to a file.")
+                print(
+                    "The data is binary and cannot be printed to the console. Use the --binary option to save it to a file."
+                )
         else:
             print(result[0])
 
@@ -73,12 +75,14 @@ class Command:
             sshTarget = self.kv.get("mydb.config.sshTarget")[0]
 
             newArgs = []
-            for arg in args :
+            for arg in args:
                 if " " in arg:
                     arg = f'"{arg}"'
                 newArgs.append(arg)
 
-            sshCommand = ["ssh"] + sshTarget.split(" ") + ["~/.local/bin/mydb"] + newArgs
+            sshCommand = (
+                ["ssh"] + sshTarget.split(" ") + ["~/.local/bin/mydb"] + newArgs
+            )
 
             if useRedirect == "true":
                 sshproc = subprocess.Popen(
@@ -105,7 +109,12 @@ def main():
         "add", help="Add key-value pair", aliases=["insert", "put", "local_add"]
     )
     parser_add.add_argument("key", type=str, help="The key to add")
-    parser_add.add_argument("value", type=str, nargs='?', help="The value to add (optional, can be provided via stdin)")
+    parser_add.add_argument(
+        "value",
+        type=str,
+        nargs="?",
+        help="The value to add (optional, can be provided via stdin)",
+    )
     parser_add.set_defaults(func=command.add)
 
     # rm command
@@ -128,7 +137,9 @@ def main():
         "get", help="Get key-value pair", aliases=["read", "local_get"]
     )
     parser_get.add_argument("key", type=str, help="The key to get")
-    parser_get.add_argument("--to-file", action="store_true", help="Output binary data to a file")
+    parser_get.add_argument(
+        "--binary", action="store_true", help="Output binary data to a file"
+    )
     parser_get.set_defaults(func=command.get)
 
     args = parser.parse_args()
