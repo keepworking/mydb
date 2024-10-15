@@ -41,7 +41,13 @@ class Command:
         if result == None:
             print("data not found.")
             return
-        sys.stdout.buffer.write(result[0])
+        if isinstance(result[0], bytes):
+            if args.to_file:
+                sys.stdout.buffer.write(result[0])
+            else:
+                print("The data is binary and cannot be printed to the console. Use the --to-file option to save it to a file.")
+        else:
+            print(result[0])
 
     def checkUseRedirect(self):
         result = False
@@ -122,6 +128,7 @@ def main():
         "get", help="Get key-value pair", aliases=["read", "local_get"]
     )
     parser_get.add_argument("key", type=str, help="The key to get")
+    parser_get.add_argument("--to-file", action="store_true", help="Output binary data to a file")
     parser_get.set_defaults(func=command.get)
 
     args = parser.parse_args()
