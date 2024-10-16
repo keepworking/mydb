@@ -54,24 +54,40 @@ class Command:
             print(result[0])
 
     def search(self, args):
-        offset = 0
-        while True:
-            results = self.kv.search_keys(args.pattern, offset=offset, limit=20)
-            if not results:
-                if offset == 0:
-                    print("No keys found matching the pattern.")
-                break
+        if sys.stdout.isatty():
+            offset = 0
+            while True:
+                results = self.kv.search_keys(args.pattern, offset=offset, limit=20)
+                if not results:
+                    if offset == 0:
+                        print("No keys found matching the pattern.")
+                    break
 
-            for key in results:
-                print("- ", key)
+                for key in results:
+                    print("- ", key)
 
-            if len(results) < 20:
-                break
+                if len(results) < 20:
+                    break
 
-            if input("Show more? (Y/n): ").lower() == "n":
-                break
+                if input("Show more? (Y/n): ").lower() == "n":
+                    break
 
-            offset += 20
+                offset += 20
+        else:
+            # Output is being piped, print all results
+            offset = 0
+            while True:
+                results = self.kv.search_keys(args.pattern, offset=offset, limit=20)
+                if not results:
+                    break
+
+                for key in results:
+                    print("- ", key)
+
+                if len(results) < 20:
+                    break
+
+                offset += 20
 
     def checkUseRedirect(self):
         result = False
