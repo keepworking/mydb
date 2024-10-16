@@ -47,9 +47,17 @@ class Kv:
     def delete(self, k):
         self.execute("DELETE FROM kv_store WHERE key = ?", (k,))
 
-    def getBlob(self, k):
+    def getRowId(self, k):
+        """Retrieve the row ID for a given key."""
+        self.execute("SELECT rowid FROM kv_store WHERE key = ?", (k,))
+        result = self.cur.fetchone()
+        return result[0] if result else None
 
-        pass
+    def getBlob(self, k):
+        """Retrieve the blob data for a given key."""
+        self.execute("SELECT value FROM kv_store WHERE key = ?", (k,))
+        result = self.cur.fetchone()
+        return result[0] if result else None
 
     def get(self, k):
         self.execute("SELECT value FROM kv_store WHERE key = ?", (k,))
