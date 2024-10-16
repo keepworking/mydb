@@ -48,6 +48,8 @@ class Command:
                 print(
                     "The data is binary and cannot be printed to the console. Use the --binary option to save it to a file."
                 )
+                if input("print anywhere (N/y)") == "y":
+                    print(result[0])
         else:
             print(result[0])
 
