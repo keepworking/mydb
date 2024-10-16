@@ -16,7 +16,7 @@ class Command:
             value = sys.stdin.buffer.read()
 
         try:
-            self.kv.insert(args.key, value)
+            self.kv.insert(args.key, args.value)
             self.kv.commit()
         except sqlite3.IntegrityError:
             if input("key is already exist. update it? (Y/n)") != "n":
