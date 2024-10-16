@@ -57,13 +57,15 @@ class Kv:
     def getBlob(self, k):
         """Retrieve the blob data for a given key."""
         if sys.version_info < (3, 11):
-            raise NotImplementedError("getBlob is only supported in Python 3.11 and above.")
-        
+            raise NotImplementedError(
+                "getBlob is only supported in Python 3.11 and above."
+            )
+
         rowId = self.getRowId(k)
         if rowId is None:
             return None
-        
-        blob = self.conn.blobopen('value', 'kv_store', rowId)
+
+        blob = self.conn.blobopen("value", "kv_store", rowId)
         return blob
 
     def get(self, k):
