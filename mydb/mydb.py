@@ -24,7 +24,14 @@ class Command:
                 self.kv.commit()
 
     def remove(self, args):
-        self.kv.delete(args.key)
+        if args.key:
+            keys = [args.key]
+        else:
+            print("Enter keys to remove (end with Ctrl+D):")
+            keys = sys.stdin.read().splitlines()
+
+        for key in keys:
+            self.kv.delete(key)
         self.kv.commit()
 
     def move(self, args):
@@ -159,7 +166,7 @@ def main():
     parser_remove = subparsers.add_parser(
         "remove", help="Delete key-value pair", aliases=["delete", "rm", "local_remove"]
     )
-    parser_remove.add_argument("key", type=str, help="The key to remove")
+    parser_remove.add_argument("key", type=str, nargs="?", help="The key to remove")
     parser_remove.set_defaults(func=command.remove)
 
     # move command
