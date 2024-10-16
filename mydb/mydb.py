@@ -82,7 +82,7 @@ class Command:
                     break
 
                 for key in results:
-                    print("- ", key)
+                    print(key)
 
                 if len(results) < 20:
                     break
