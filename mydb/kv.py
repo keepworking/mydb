@@ -55,9 +55,11 @@ class Kv:
 
     def getBlob(self, k):
         """Retrieve the blob data for a given key."""
-        self.execute("SELECT value FROM kv_store WHERE key = ?", (k,))
-        result = self.cur.fetchone()
-        return result[0] if result else None
+        rowId = self.getRowId(k)
+        if rowId == None :
+            return None
+        blob = self.conn.blobopen('value', 'kv_store', rowId)
+        return blob
 
     def get(self, k):
         self.execute("SELECT value FROM kv_store WHERE key = ?", (k,))
