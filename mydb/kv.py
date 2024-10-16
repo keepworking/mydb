@@ -73,9 +73,12 @@ class Kv:
         result = self.cur.fetchone()
         return result
 
-    def search_keys(self, pattern):
-        """Search for keys matching the given pattern."""
-        self.execute("SELECT key FROM kv_store WHERE key LIKE ?", (pattern,))
+    def search_keys(self, pattern, offset=0, limit=20):
+        """Search for keys matching the given pattern with pagination."""
+        self.execute(
+            "SELECT key FROM kv_store WHERE key LIKE ? LIMIT ? OFFSET ?",
+            (pattern, limit, offset),
+        )
         results = self.cur.fetchall()
         return [row[0] for row in results]
 
